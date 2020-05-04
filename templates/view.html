@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <title>Geophires Online Tool</title>
+  </head>
+  <body>
+
+  <!-- Input and Results are typeset as a two-column table -->
+  <table>
+  <tr>
+  <td valign="top">
+    <h1>Geophires Online Modeling Tool</h1>
+    <h3>The following is an online version of the GEOPHIRES v2 modeling app found <a href="https://github.com/NREL/GEOPHIRES-v2"> here.</a> </h3> 
+      
+    <a href="/example1">Example File.</a></p>
+    <h2>Input:</h2>
+
+      <form method=post action="" enctype="multipart/form-data">
+        <table>
+          {% for field in form %}
+            <tr><td>{{ field.name }}</td>
+                <td>{{ field(size=20) }}</td>
+                <td>{% if field.errors %}
+                  <ul class=errors>
+                  {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}</ul>
+                {% endif %}</td></tr>
+          {% endfor %}
+        </table>
+        <p><input type="submit" value="Calculate" href="/download">
+    </form>
+
+        <a href="/download">Download File.</a></p>
+
+
+  </td>
+
+
+  <td valign="top">
+    <h1>{{ title }}</h1>
+
+    <canvas id="chart" width="800" height="400"></canvas>
+    <script>
+
+      steps = 10
+      max = {{ max }}
+
+      // bar chart data
+      var barData = {
+        labels : [
+          {% for item in labels %}
+            "{{ item }}",
+          {% endfor %}
+        ],
+
+        datasets : [{
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(151,187,205,1)",
+          bezierCurve : false,
+          label: "Reservoir Heat Content(10^15 J)",
+          data : [
+                    {% for item in values %}
+                              {{ item }},
+                          {% endfor %}]
+                          }
+                  ] }
+  var config = {
+        type: 'line',
+        data: barData,
+        scaleSteps: steps,
+        scaleStepWidth: Math.ceil(max / steps),
+        scaleStartValue: 0,
+        scaleShowVerticalLines: true,
+        scaleShowGridLines : true,
+        barShowStroke : true,
+        scaleShowLabels: true,
+        bezierCurve: false,
+        options: {
+            responsive : true,
+            scales: {
+                    xAxes: [{
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'Plant Lifetime(Years)'
+                      }
+                    }],
+                    yAxes: [{
+                      display: true,
+                      scaleLabel: {
+                        display: true,
+                        labelString: 'Reservoir Heat Content(10^15 J)'
+                      }
+                     }]
+				            }
+        }
+
+      };  
+    
+
+      Chart.defaults.global.animationSteps = 50;
+      Chart.defaults.global.tooltipYPadding = 16;
+      Chart.defaults.global.tooltipCornerRadius = 0;
+      Chart.defaults.global.tooltipTitleFontStyle = "normal";
+      Chart.defaults.global.tooltipFillColor = "rgba(0,0,0,0.8)";
+      Chart.defaults.global.animationEasing = "easeOutBounce";
+      Chart.defaults.global.responsive = false;
+      Chart.defaults.global.scaleLineColor = "black";
+      Chart.defaults.global.scaleFontSize = 16;
+
+      
+      
+      // set config
+      
+
+      // get bar chart canvas
+      var mychart = document.getElementById("chart").getContext("2d");
+
+      // draw Line chart
+      var LineChartDemo = new Chart(mychart, config);
+      
+      
+
+    </script>
+  </td>
+  </tr>
+  </table>
+  </body>
+</html>
